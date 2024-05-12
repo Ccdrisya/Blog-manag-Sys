@@ -171,7 +171,6 @@ crs.close()
 def create():
     import mysql.connector as msc
     from prettytable import PrettyTable
-    
     mydb = msc.connect(host="localhost", user="root", password="root", allow_local_infile=True)
     crs = mydb.cursor()
     qry02 = "USE bms"
@@ -184,21 +183,16 @@ def create():
     
     crs.execute('INSERT INTO qns(user_name, Categories, question) VALUES (%s, %s, %s)', (Username1, categor, quest))
     crs.execute('SELECT user_name, question FROM qns WHERE user_name = (%s)', (Username1,))
-    data7 = crs.fetchall()
-    
+    data7 = crs.fetchone()#changed
     table = PrettyTable()
     table.field_names = ["user_name", "question"]
-    
     for ab in data7:
         table.add_row(ab)
-    
     print(table)
     print("Blog created successfully!!!\n")
     menu()
-
-    
-mydb.commit()
-crs.close
+    mydb.commit()
+    crs.close()
     
 def read():
     import mysql.connector as msc
@@ -264,7 +258,7 @@ def read():
         print("     XX INVALID CHOICE XX")
         read()
 
-    choice2 = input("DO YOU WANT TO COMMENT ON THE POST (y/n): ")
+    choice2 = input("DO YOU WANT TO COMMENT ON ANY POST (y/n): ")#changed
     if choice2 == 'y':
         post_id = int(input("ENTER the Post ID : "))
         user=input("Enter your ID here : ")
@@ -280,7 +274,7 @@ def read():
             FROM comt c
             JOIN qns q ON c.post_id = q.post_id
             JOIN Profiles p ON c.id_profile = p.id_profile"""
-        # qry13 = "SELECT post_id,id_profile,question,comment FROM comt"
+        #qry13 = "SELECT post_id,id_profile,question,comment FROM comt"
         crs.execute(qry13)
 
         rows = crs.fetchall()
@@ -353,7 +347,6 @@ def profile():
     for ab in data :
         table.add_row(ab)
         print(table)
-        homepage()
     print("YOU CAN REMOVE YOUR ACCOUNT OR POSTS HERE")
     del_pfl=input("TO REMOVE ACCOUNT ENTER (a) \n TO REMOVE POST ENTER (p) : ")
     if del_pfl== 'a':
@@ -374,9 +367,9 @@ def profile():
         crs.execute('UPDATE Profiles SET Owned_Posts=Owned_Posts-1 where post_id=(%s)',(post_id, ))
         print("POST DELETED SUCCESSFULLY")
     else :
-        print("in")
-        homepage()
-
+        print("   XX INVALID CHOICE XX")
+        menu()
+   menu()
     mydb.commit()
     crs.close()
 
@@ -440,12 +433,11 @@ def user():
         print("CREATED ACCOUNT SUCCESSFULLY")
         print()
         menu()
-        print()
     elif u1 == 2 :
         menu()
     else:
-         print("     XX  INVALID CHOICE  XX")
-
+     print("     XX  INVALID CHOICE  XX")
+     user()#changed
 
 
 
@@ -478,6 +470,7 @@ def profilemng():
     if cd== 'y' :
         username3=input("Enter your user name")
         crs.execute('DELETE FROM Profiles WHERE Username=(%s)',(username3))
+        crs.execute('DELETE FROM qns WHERE user_name=(%s)',(username3))#changed
         print("ACCOUNT DELETED SUCCESSFULLY")
     elif cd== 'n':
         dashboard()
@@ -554,24 +547,21 @@ def categorymng():
 
     
 def exit():
-    print("                                                            THANK YOU FOR VISITING")
-    print("                                                                    ƪ(˘⌣˘)ʃ   ")
-    print()
-    print("                                                           ***BLOG MANAGEMENT SYSTEM***")
-    print("                                                             BY")
-    print("                                                             DEVIKS PS")
-    print("                                                             DRISYA C C")
-    print("                                                             RINIT ROLLY")
-    print("                                                             CHRISTEENA FRANCIS\n ")
     e1=input("DO YOU WANT TO GO TO HOMEPAGE? (y/n):  ")
     if e1=='y':
         homepage()
-    elif e1=='n':
-        exit()
     else:
-        print("     XX INVALID CHOICE XX")
+      print("                                                            THANK YOU FOR VISITING")
+      print("                                                                    ƪ(˘⌣˘)ʃ   ")
+      print()
+      print("                                                           ***BLOG MANAGEMENT SYSTEM***")
+      print("                                                             BY")
+      print("                                                             DEVIKA PS")
+      print("                                                             DRISYA C C")
+      print("                                                             RINIT ROLLY")
+      print("                                                             CHRISTEENA FRANCIS\n ")
     
-
+  #changed
 
 def dashboard(): 
     print("                                                                 WELCOME TO ADMIN PANEL")
@@ -591,31 +581,19 @@ def dashboard():
                                                             |          3.Exit                |
                                                             +--------------------------------+  
                                                                                                               """)
-
-    a4 = int(input("Enter your choice :"))
-    if a4 == 1:
+    
+    while True:
+      a4 = int(input("Enter your choice :"))
+      if a4 == 1:
         profilemng()
-    elif a4 == 2:
+      elif a4 == 2:
         categorymng()
-    elif a4 == 3:
+      elif a4 == 3:
         print("EXIT")
         exit()
-    else:
+      else:
        print("     XX   INVALID CHOICE   XX")
-
-
-def admin():
-    print("Enter the password to log in to the ADMIN PANEL \n (Remember you have only 3 chances to login ) ")
-    num=1
-    while num <= 3:
-        a2 = int(input("Enter the password here :"))
-        if a2 == 1234:
-            dashboard()
-        else :
-            print("password is incorrect!!")
-        num = num + 1
-        print(" !!!you have no more chances!!!")
-
+      
 def admin():
     print("Enter the password to log in to the ADMIN PANEL \n (Remember you have only 3 chances to login ) ")
     num = 1
@@ -629,7 +607,8 @@ def admin():
             if num == 3:  # Check if it's the last attempt
                 print("!!! You have no more chances !!!")
         num = num + 1
-
+        homepage()#changed
+        break#changed
 
 def homepage():
 
