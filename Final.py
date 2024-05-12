@@ -4,9 +4,9 @@ mydb = msc.connect(host="localhost",user="root",password="root",allow_local_infi
 
 crs=mydb.cursor()
 
-qry01 = "CREATE DATABASE if not exists bms"
+qry01 = "CREATE DATABASE if not exists blog"
 crs.execute(qry01)
-qry02 = "USE bms"
+qry02 = "USE blog"
 crs.execute(qry02)
 qry03 = "CREATE TABLE if not exists Profiles (id_profile INT AUTO_INCREMENT PRIMARY KEY,Username varchar(25),Email varchar(25),Followers int(4),Following int(4),Owned_Posts int(20),Comments int(5));"
 crs.execute(qry03)
@@ -173,7 +173,7 @@ def create():
 
     mydb = msc.connect(host="localhost", user="root", password="root", allow_local_infile=True)
     crs = mydb.cursor()
-    qry02 = "USE bms"
+    qry02 = "USE blog"
     crs.execute(qry02)
     print("TO CREATE BLOGS")
 
@@ -205,7 +205,7 @@ def read():
     from prettytable import PrettyTable
     mydb = msc.connect(host="localhost", user="root", password="root", allow_local_infile=True)
     crs = mydb.cursor()
-    qry02 = "USE bms"
+    qry02 = "USE blog"
     crs.execute(qry02)
     global Username
     print("To read blogs")
@@ -308,7 +308,7 @@ def library():
     from prettytable import PrettyTable
     mydb = msc.connect(host="localhost",user="root",password="root",allow_local_infile=True)
     crs=mydb.cursor()
-    qry02 = "USE bms"
+    qry02 = "USE blog"
     crs.execute(qry02)
     print()
     print("                                             LIBRARY      ")
@@ -330,7 +330,7 @@ def profile():
     from prettytable import PrettyTable
     mydb = msc.connect(host="localhost",user="root",password="root",allow_local_infile=True)
     crs=mydb.cursor()
-    qry02 = "USE bms"
+    qry02 = "USE blog"
     crs.execute(qry02)
     print("profile")
     a1=input("Enter your Username: ")
@@ -363,14 +363,14 @@ def profile():
         print("POST DELETED SUCCESSFULLY")
     else :
         print("in")
-        homepage()
+        menu()
 
     mydb.commit()
     crs.close()
 
 def menu():
-         print("                                                 (っ◔◡◔)っ WELCOME USER")
-         print(                          """            ===============  MAIN MENU  ===============
+         print("                                                         (っ◔◡◔)っ WELCOME USER")
+         print(                          """                                                          ===============  MAIN MENU  ===============
                                                              +--------------------------------+
                                                              |           a.Create a post      |
                                                              +--------------------------------+         
@@ -402,29 +402,57 @@ def user():
     from prettytable import PrettyTable
     mydb = msc.connect(host="localhost",user="root",password="root",allow_local_infile=True)
     crs=mydb.cursor()
-    qry02 = "USE bms"
+    qry02 = "USE blog"
     crs.execute(qry02)
     print("USER PANEL")
-    u1=int(input("select (1) If You  do not have an account here\n select (2) If you have an account to continue"))
+    u1=int(input("select (1) If You  do not have an account here\n select (2) If you have an account to continue : "))
     if u1== 1 :
         print("Create account")
-        Username4=input("Enter your new username: ")
-        email=input("enter your email: ")
-        Followers=0
-        Following=0
-        Owned_Posts=0
-        crs.execute('insert into qns(user_name) values(%s) ',(Username4, ))
-        crs.execute('insert into Profiles(Username,Email,Followers,Following,Owned_Posts) values(%s,%s,%s,%s,%s)',(Username4,email, Followers, Following,Owned_Posts))
-        crs.execute('select id_profile,Username,Followers,Following,Owned_Posts from Profiles where Username=(%s) ',( Username4, ))
-        data3=crs.fetchall()
-        table=PrettyTable()
-        table.field_names=["id_profile","Username","Followers","Following","Owned_Posts"]
-        for ab in data3 :
-            table.add_row(ab)
-        print(table)
 
-        mydb.commit()
-        crs.close()
+        new_username = input("Enter your new username: ")
+        email = input("Enter your email: ")
+
+        Followers = 0
+        Following = 0
+        Owned_Posts = 0
+
+        try:
+            crs.execute('INSERT INTO qns (user_name) VALUES (%s)', (new_username, ))
+            crs.execute('INSERT INTO Profiles (Username, Email, Followers, Following, Owned_Posts) VALUES (%s, %s, %s, %s, %s)', 
+                        (new_username, email, Followers, Following, Owned_Posts))
+            mydb.commit()  # Commit the changes
+
+            crs.execute('SELECT id_profile, Username, Followers, Following, Owned_Posts FROM Profiles WHERE Username = (%s)', (new_username, ))
+            data3 = crs.fetchall()
+
+            table = PrettyTable()
+            table.field_names = ["id_profile", "Username", "Followers", "Following", "Owned_Posts"]
+            for row in data3:
+                table.add_row(row)
+            print(table)
+
+        except Exception as e:
+            print(f"Error: {e}")
+            # print("Create account")
+            # Username4=input("Enter your new username: ")
+            # email=input("enter your email: ")
+            # Followers=0
+            # Following=0
+            # Owned_Posts=0
+            # crs.execute('insert into qns(user_name) values(%s) ',(Username4, ))
+            # crs.execute('insert into Profiles(Username,Email,Followers,Following,Owned_Posts) values(%s,%s,%s,%s,%s)',(Username4,email, Followers, Following,Owned_Posts))
+            # crs.execute('select id_profile,Username,Followers,Following,Owned_Posts from Profiles where Username=(%s) ',( Username4, ))
+            # data3=crs.fetchall()
+            # table=PrettyTable()
+            # table.field_names=["id_profile","Username","Followers","Following","Owned_Posts"]
+            # for ab in data3 :
+            #     table.add_row(ab)
+            # print(table)
+
+            
+
+            mydb.commit()
+            crs.close()
 
         print("CREATED ACCOUNT SUCCESSFULLY")
         print()
@@ -443,7 +471,7 @@ def profilemng():
     from prettytable import PrettyTable
     mydb = msc.connect(host="localhost",user="root",password="root",allow_local_infile=True)
     crs=mydb.cursor()
-    qry02 = "USE bms"
+    qry02 = "USE blog"
     crs.execute(qry02)
     print("                                                                 PROFILE MANAGER")
     print("                                                            __________________________")
@@ -463,11 +491,19 @@ def profilemng():
     for ab in data7 :
         table.add_row(ab)
     print(table)
-    cd=input("wanna delete profile(y) or go to dashboard (n) :")
+    cd=input("wanna delete profile(y) or go to dashboard (n) : ")
     if cd== 'y' :
-        username3=input("Enter your user name")
-        crs.execute('DELETE FROM qns WHERE Username=(%s)',(username3))
-        print("ACCOUNT DELETED SUCCESSFULLY")
+        username3 = input("Enter your user name: ")
+        try:
+            crs.execute('DELETE FROM qns WHERE user_name = %s', (username3, ))
+            crs.execute('DELETE FROM Profiles WHERE Username = %s', (username3, ))
+            mydb.commit()  # Commit the changes
+            print("ACCOUNT DELETED SUCCESSFULLY")
+        except Exception as e:
+            print(f"Error: {e}")
+        # username3=input("Enter your user name")
+        # crs.execute('DELETE FROM qns WHERE Username=(%s)',(username3))
+        # print("ACCOUNT DELETED SUCCESSFULLY")
     elif cd== 'n':
         dashboard()
     else :
@@ -482,7 +518,7 @@ def categorymng():
     from prettytable import PrettyTable
     mydb = msc.connect(host="localhost",user="root",password="root",allow_local_infile=True)
     crs=mydb.cursor()
-    qry02 = "USE bms"
+    qry02 = "USE blog"
     crs.execute(qry02)
     category=input("Select the category(MATHS,PHYSICS,CHEMISTRY,HISTORY,COMPUTER)....:")
     if category=='MATHS' :
