@@ -123,8 +123,8 @@ HOW TO USE
 AUTHORS
 --------------------------------------------------------------------------------
 
-  Devika P S
   Drisya C C
+  Devika P S
   Rinit Rolly
   Christeena Francis
 
